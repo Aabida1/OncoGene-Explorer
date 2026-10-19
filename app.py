@@ -149,22 +149,20 @@ with st.expander("About this workspace · data and interpretation", expanded=Fal
     - **Important:** cohorts are analyzed separately; uploaded gene identifiers and contrast directions must be harmonized before comparing studies.
     """)
 
-if not DATA_FILE.exists():
-    st.error("The bundled results CSV is missing. Ensure data/limma_tumor_vs_normal_all_genes.csv exists.")
-    st.stop()
-try:
-    primary = normalize_result_columns(pd.read_csv(DATA_FILE), "GSE183947")
-except Exception as exc:
-    st.error(f"Could not load the bundled analysis file: {exc}")
-    st.stop()
+primary = None
+if DATA_FILE.exists():
+    try:
+        primary = normalize_result_columns(pd.read_csv(DATA_FILE), "GSE183947")
+    except Exception as exc:
+        st.error(f"Could not load the bundled analysis file: {exc}")
 
 with st.sidebar:
     st.markdown("### Study setup")
     st.caption("Configure the evidence included in this session.")
-    st.caption("Start with GSE183947. Add independent cohorts by uploading their precomputed DEG tables.")
+    st.caption("Load a cohort result table, then add independent cohorts for comparison.")
     uploaded_files = st.file_uploader("Add cohort DEG CSV files", type=["csv"], accept_multiple_files=True,
         help="Each CSV must contain gene_id/gene symbol, logFC, P.Value and adj.P.Val (or common equivalents). Upload one file per cohort.")
-    cohorts = {"GSE183947": primary}
+    cohorts = {"GSE183947": primary} if primary is not None else {}
     for i, file in enumerate(uploaded_files or []):
         label = Path(file.name).stem.strip() or f"Uploaded cohort {i+1}"
         if label in cohorts:
@@ -173,6 +171,8 @@ with st.sidebar:
             cohorts[label] = normalize_result_columns(pd.read_csv(file), label)
         except Exception as exc:
             st.error(str(exc))
+    if not cohorts:
+        st.warning("No verified cohort result table is bundled yet. Upload at least one cohort DEG CSV to use the dashboard.")
     st.divider()
     selected_names = st.multiselect(
         "Cohorts included in cross-study comparison",
