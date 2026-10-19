@@ -1,6 +1,3 @@
-Dataset: GSE183947 (breast cancer)
-Source: NCBI GEO supplementary FPKM matrix and GEO series matrix metadata
-Input values are FPKM, not raw gene counts. DESeq2 was not used.
-Analysis: limma on log2(FPKM + 1), paired design ~ pair + condition.
-This is a processed-expression reanalysis, not a raw-FASTQ pipeline run.
-Check original sample pairing and study methods before scientific interpretation.
+DATA STATUS
+
+No real cohort data are bundled in this GitHub repository yet. Synthetic placeholders have been removed to avoid misleading scientific interpretation. Upload a verified cohort-level DEG CSV in the app sidebar to use the dashboard. The required columns are gene_id, logFC, P.Value, and adj.P.Val (common equivalents are accepted). Sample metadata must be supplied and verified separately before drawing biological conclusions.
