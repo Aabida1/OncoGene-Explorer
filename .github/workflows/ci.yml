@@ -23,8 +23,7 @@ jobs:
           from pathlib import Path
           required = [
               Path('app.py'), Path('requirements.txt'),
-              Path('data/limma_tumor_vs_normal_all_genes.csv'),
-              Path('data/sample_metadata.csv'), Path('scripts/run_gse42568.R'),
+              Path('scripts/run_gse42568.R'), Path('templates/deg_upload_template.csv'),
           ]
           missing = [str(path) for path in required if not path.is_file()]
           if missing:
