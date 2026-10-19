@@ -14,8 +14,6 @@ streamlit run app.py
 
 ## Repository structure
 - `app.py` — Streamlit dashboard
-- `data/limma_tumor_vs_normal_all_genes.csv` — precomputed GSE183947 DEG result table
-- `data/sample_metadata.csv` — sample annotations for the bundled starting cohort
 - `data/analysis_provenance.txt` — processing notes
 - `scripts/run_gse42568.R` — GSE42568 workflow starter for platform-appropriate limma analysis
 - `templates/deg_upload_template.csv` — example input format
@@ -25,18 +23,18 @@ streamlit run app.py
 Upload one CSV per cohort, one row per gene, with columns equivalent to `gene_id`, `logFC`, `P.Value`, and `adj.P.Val`. Common aliases are supported. Use a consistent gene identifier system and confirm contrast coding before comparing results.
 
 ## Datasets and methods
-- **GSE183947**: supplied processed-expression reanalysis, limma on `log2(FPKM + 1)`. FPKM values are not raw counts; DESeq2 was not used for this dataset.
+- **GSE183947**: intended starting cohort; its verified DEG results are not bundled in this repository yet. Upload a cohort-level DEG CSV to use the dashboard.
 - **GSE42568**: Affymetrix microarray cohort; analyze separately with platform-appropriate methods, and harmonize identifiers before cross-cohort comparison.
 - **Potential future cohort**: TCGA-BRCA with a documented tumor-versus-normal contrast and data version.
 
-The app displays precomputed results and does not download GEO/TCGA data, process FASTQ files, or fit per-cohort differential-expression models at runtime. The optional pathway module expects a user-provided GMT gene-set file. The target module only matches user-supplied evidence and does not invent target/drug associations.
+The app displays user-supplied precomputed results and does not download GEO/TCGA data, process FASTQ files, or fit per-cohort differential-expression models at runtime. No synthetic or unverified cohort data are bundled. The optional pathway module expects a user-provided GMT gene-set file. The target module only matches user-supplied evidence and does not invent target/drug associations.
 
 ## Interpretation
 Cohorts are analyzed separately. Missing gene mappings remain missing rather than being treated as zero effects or p-values of 1. Fisher's method combines raw p-values, with BH correction across genes; it is not a formal effect-size meta-analysis. Direction consistency, candidate-prioritization scores, and immune-signature summaries are exploratory and do not validate biomarkers, establish causality, demonstrate pathway activation, or estimate cell abundance. Confirm sample metadata, pairing, contrast direction, normalization, gene identifiers, and source provenance before interpreting results.
 
 ## Deploy
 ### Streamlit Community Cloud
-Create a new app from this repository, branch `main`, entrypoint `app.py`.
+Create a new app from this repository, branch `main`, entrypoint `app.py`. After deployment, upload a verified cohort DEG CSV through the sidebar; the repository currently contains no real cohort data.
 
 ### Render
 Build: `pip install -r requirements.txt`
