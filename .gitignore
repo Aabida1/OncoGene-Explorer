@@ -1,0 +1,24 @@
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# macOS / editors
+.DS_Store
+.vscode/
+.idea/
+
+# Secrets
+.streamlit/secrets.toml
+.env
+.env.*
+!.env.example
+
+# Large raw downloads and generated files
+*.soft.gz
+*.tar.gz
+data/raw/
+data/downloads/
