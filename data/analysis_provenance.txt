@@ -1,3 +1,6 @@
-DEMONSTRATION DATA ONLY
-
-The minimal CSV files currently in this repository are synthetic placeholders added to establish the project structure. They are NOT the original GSE183947 data and must not be used for scientific interpretation. Replace them with the verified cohort results and metadata before publishing or deploying for research use.
+Dataset: GSE183947 (breast cancer)
+Source: NCBI GEO supplementary FPKM matrix and GEO series matrix metadata
+Input values are FPKM, not raw gene counts. DESeq2 was not used.
+Analysis: limma on log2(FPKM + 1), paired design ~ pair + condition.
+This is a processed-expression reanalysis, not a raw-FASTQ pipeline run.
+Check original sample pairing and study methods before scientific interpretation.
