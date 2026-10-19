@@ -1,55 +1,50 @@
 # OncoGene Explorer
 
-An interactive, Streamlit-based cancer transcriptomics research platform for differential gene-expression exploration, independent cohort comparison, exploratory consensus analysis, pathway enrichment, immune-signature exploration, and gene-level evidence reporting.
-
-## Current focus
-Breast-cancer transcriptomics, starting with the supplied GSE183947 precomputed differential-expression results and a separate GSE42568 Affymetrix workflow. Each cohort must be analyzed using a platform-appropriate method; raw expression matrices from different platforms must not be concatenated as if directly comparable.
-
-## Features
-- Interactive cohort-specific volcano plot and DEG tables with filters and CSV exports.
-- Upload additional cohort-level DEG result tables and select the active cohort.
-- Compare gene-level log fold changes across independent cohorts.
-- Exploratory Fisher combined-p-value and Benjamini–Hochberg correction summaries, with direction consistency and coverage reported separately.
-- GMT pathway over-representation analysis.
-- Immune-signature summaries and gene-level evidence bridge using user-supplied evidence.
-- Analysis provenance and limitations documentation.
+An interactive Streamlit research dashboard for cancer transcriptomics. It supports differential-expression exploration, independent cohort comparison, exploratory cross-cohort evidence aggregation, GMT pathway enrichment, immune-signature screening, and source-traceable target-evidence matching.
 
 ## Quick start
-Python 3.10+ is recommended; Python 3.11 is tested in CI.
-
 ```bash
 python -m venv .venv
-# macOS/Linux
-source .venv/bin/activate
-# Windows PowerShell: .venv\\Scripts\\Activate.ps1
+# macOS/Linux: source .venv/bin/activate
+# Windows: .venv\\Scripts\\Activate.ps1
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 streamlit run app.py
 ```
-Then open the local URL printed by Streamlit, usually http://localhost:8501.
+
+## Repository structure
+- `app.py` — Streamlit dashboard
+- `data/limma_tumor_vs_normal_all_genes.csv` — precomputed GSE183947 DEG result table
+- `data/sample_metadata.csv` — sample annotations for the bundled starting cohort
+- `data/analysis_provenance.txt` — processing notes
+- `scripts/run_gse42568.R` — GSE42568 workflow starter for platform-appropriate limma analysis
+- `templates/deg_upload_template.csv` — example input format
+- `.github/workflows/ci.yml` — syntax and required-file smoke checks
+
+## Data format for added cohorts
+Upload one CSV per cohort, one row per gene, with columns equivalent to `gene_id`, `logFC`, `P.Value`, and `adj.P.Val`. Common aliases are supported. Use a consistent gene identifier system and confirm contrast coding before comparing results.
+
+## Datasets and methods
+- **GSE183947**: supplied processed-expression reanalysis, limma on `log2(FPKM + 1)`. FPKM values are not raw counts; DESeq2 was not used for this dataset.
+- **GSE42568**: Affymetrix microarray cohort; analyze separately with platform-appropriate methods, and harmonize identifiers before cross-cohort comparison.
+- **Potential future cohort**: TCGA-BRCA with a documented tumor-versus-normal contrast and data version.
+
+The app displays precomputed results and does not download GEO/TCGA data, process FASTQ files, or fit per-cohort differential-expression models at runtime. The optional pathway module expects a user-provided GMT gene-set file. The target module only matches user-supplied evidence and does not invent target/drug associations.
+
+## Interpretation
+Cohorts are analyzed separately. Missing gene mappings remain missing rather than being treated as zero effects or p-values of 1. Fisher's method combines raw p-values, with BH correction across genes; it is not a formal effect-size meta-analysis. Direction consistency, candidate-prioritization scores, and immune-signature summaries are exploratory and do not validate biomarkers, establish causality, demonstrate pathway activation, or estimate cell abundance. Confirm sample metadata, pairing, contrast direction, normalization, gene identifiers, and source provenance before interpreting results.
 
 ## Deploy
 ### Streamlit Community Cloud
-1. Select **New app** and connect this repository.
-2. Choose branch `main` and entrypoint `app.py`.
-3. Deploy; dependencies are in `requirements.txt`.
+Create a new app from this repository, branch `main`, entrypoint `app.py`.
 
 ### Render
-Build command: `pip install -r requirements.txt`
+Build: `pip install -r requirements.txt`
 
-Start command: `streamlit run app.py --server.port $PORT --server.address 0.0.0.0`
-
-## Data and analysis notes
-- `data/limma_tumor_vs_normal_all_genes.csv` contains supplied GSE183947 precomputed results; it is not raw read data.
-- `data/sample_metadata.csv` contains supplied sample annotations; confirm sample mapping and the paired design before making biological claims.
-- `scripts/run_gse42568.R` runs a separate limma workflow for the GSE42568 Affymetrix cohort and expects its source inputs to be downloaded and placed as described in the script.
-- `templates/deg_upload_template.csv` shows the minimum upload schema. Additional cohort result CSVs should contain one row per gene and columns equivalent to `gene_id`, `logFC`, `P.Value`, and `adj.P.Val`.
-
-## Cross-cohort interpretation
-Cohorts are analyzed separately. Identifier mapping, contrast direction, gene duplication and study design should be checked before comparison. A gene missing from a cohort is not assigned zero expression or a p-value of 1. Fisher's method combines p-values; it is not a pooled effect-size estimate or a formal random-effects meta-analysis. Scores and immune signatures are exploratory and do not establish biomarker validity, pathway activation, or cell abundance.
+Start: `streamlit run app.py --server.port $PORT --server.address 0.0.0.0`
 
 ## Checks
-GitHub Actions runs Python syntax compilation and checks that the key app/data files are present on pushes and pull requests. This CI smoke check does not replace running the app interactively against real user-uploaded data or testing a deployment.
+GitHub Actions checks Python syntax and required project files. This does not replace interactive testing or a successful hosted deployment.
 
 ## Disclaimer
-For research and educational use only. Not intended for diagnosis, treatment selection, or other clinical decisions.
+Research and educational use only. Not for diagnosis, prognosis, or treatment decisions.
