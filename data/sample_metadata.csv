@@ -1,0 +1,3 @@
+geo_accession,title,condition,pair
+DEMO_SAMPLE_01,Demo normal sample,normal,DEMO_PAIR_01
+DEMO_SAMPLE_02,Demo tumour sample,tumor,DEMO_PAIR_01
